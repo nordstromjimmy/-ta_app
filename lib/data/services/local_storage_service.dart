@@ -3,17 +3,21 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/ata.dart';
+import '../models/company_info.dart';
 import '../models/project.dart';
 
-/// Persists projects and ÄTAs as JSON strings in shared preferences.
+/// Persists app data as JSON strings in shared preferences.
 class LocalStorageService {
   LocalStorageService(this._prefs);
 
   static const _projectsKey = 'projects_v1';
   static const _atasKey = 'atas_v1';
-  static const keys = {_projectsKey, _atasKey};
+  static const _companyKey = 'company_v1';
+  static const keys = {_projectsKey, _atasKey, _companyKey};
 
   final SharedPreferencesWithCache _prefs;
+
+  // ---------- Projects & ÄTAs ----------
 
   List<Project> loadProjects() =>
       _readList(_projectsKey).map(Project.fromJson).toList();
@@ -25,6 +29,19 @@ class LocalStorageService {
 
   Future<void> saveAtas(List<Ata> atas) =>
       _writeList(_atasKey, atas.map((a) => a.toJson()));
+
+  // ---------- Company ----------
+
+  CompanyInfo loadCompany() {
+    final raw = _prefs.getString(_companyKey);
+    if (raw == null) return const CompanyInfo();
+    return CompanyInfo.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+  }
+
+  Future<void> saveCompany(CompanyInfo company) =>
+      _prefs.setString(_companyKey, jsonEncode(company.toJson()));
+
+  // ---------- Helpers ----------
 
   List<Map<String, dynamic>> _readList(String key) {
     final raw = _prefs.getString(key);

@@ -1,3 +1,4 @@
+import 'package:ata_work/ui/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -38,7 +39,18 @@ class ProjectsScreen extends StatelessWidget {
     final projects = repo.projects;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Projekt')),
+      appBar: AppBar(
+        title: const Text('Projekt'),
+        actions: [
+          IconButton(
+            tooltip: 'Inställningar',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const SettingsScreen())),
+          ),
+        ],
+      ),
       body: projects.isEmpty
           ? const EmptyState(
               icon: Icons.folder_open_outlined,
